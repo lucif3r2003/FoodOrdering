@@ -10,5 +10,6 @@ namespace FoodWeb.ViewModels
         public List<Reviews> Reviews { get; set; } = new List<Reviews>();
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
+        public int TotalReviews { get; set; }
     }
 }
