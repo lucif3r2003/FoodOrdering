@@ -1,0 +1,85 @@
+@model FoodWeb.ViewModels.PagedReviewViewModel
+@{
+    ViewData["Title"] = "Customer Reviews";
+}
+
+<h2 style="color: white">Customer Reviews</h2>
+
+<form method="get" class="mb-3 row g-2">
+    <div class="col-md-4">
+        <input name="search" value="@Model.Search" class="form-control" placeholder="Search by menu item..." />
+    </div>
+    <div class="col-md-auto">
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Customer</th>
+            <th>Menu Item</th>
+            <th>Rating</th>
+            <th>Comment</th>
+            <th>Reply</th>
+            <th>Reply Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var review in Model.Reviews)
+        {
+            <tr>
+                <td>@review.CustomerName</td>
+                <td>@review.MenuItemName</td>
+                <td>
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i class="fa fa-star @(i <= review.Rating ? "text-warning" : "text-secondary")"></i>
+                    }
+                </td>
+                <td>@review.Comment</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(review.Reply))
+                    {
+                        <div>
+                            <strong>@review.Reply</strong><br />
+                            <small class="text-muted">@review.ReplyAt?.ToString("dd/MM/yyyy HH:mm")</small>
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No reply</span>
+                    }
+                </td>
+                <td>
+                    @if (string.IsNullOrEmpty(review.Reply))
+                    {
+                        <form asp-action="Reply" method="post">
+                            <input type="hidden" name="id" value="@review.Id" />
+                            <input type="hidden" name="search" value="@Model.Search" />
+                            <input type="hidden" name="page" value="@Model.CurrentPage" />
+                            <textarea name="reply" class="form-control mb-1" rows="3" placeholder="Write reply..." required></textarea>
+                            <button type="submit" class="btn btn-sm btn-primary">Send</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-success">Replied</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Pagination -->
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a class="page-link" href="?search=@Model.Search&page=@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>

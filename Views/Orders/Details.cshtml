@@ -1,0 +1,36 @@
+@model FoodWeb.Models.Orders
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h2>Order #@Model.Id Details</h2>
+<p><strong>Date:</strong> @Model.OrderDate?.ToString("g")</p>
+<p><strong>Status:</strong> @Model.Status</p>
+<p><strong>Payment:</strong> @Model.PaymentStatus</p>
+
+@if (Model.OrderDetails != null && Model.OrderDetails.Any())
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.OrderDetails)
+        {
+            <tr>
+                <td>@item.MenuItem.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.TotalPrice.ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No order details found.</p>
+}

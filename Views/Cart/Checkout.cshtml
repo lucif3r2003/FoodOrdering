@@ -1,0 +1,37 @@
+@model CheckoutViewModel
+
+<h2>Xác nhận đơn hàng</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Món</th>
+        <th>Số lượng</th>
+        <th>Giá</th>
+        <th>Tổng</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.CartItems)
+    {
+        <tr>
+            <td>@item.Item.Name</td>
+            <td>@item.Quantity</td>
+            <td>@item.Item.Price.ToString("N0")</td>
+            <td>@(item.Item.Price * item.Quantity ?? 0)</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h4>Tổng cộng: @Model.TotalAmount.ToString("N0") VNĐ</h4>
+
+<form asp-action="PlaceOrder" method="post">
+    <input type="hidden" name="selectedItemIds" value="@string.Join(",", Model.CartItems.Select(c => c.Id))" />
+    <div class="form-group">
+        <label>Phương thức thanh toán:</label><br />
+        <label><input type="radio" name="paymentMethod" value="COD" checked /> Thanh toán khi nhận hàng (COD)</label><br />
+        <label><input type="radio" name="paymentMethod" value="VNPAY" /> Chuyển khoản qua VNPAY</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Xác nhận đặt hàng</button>
+</form>

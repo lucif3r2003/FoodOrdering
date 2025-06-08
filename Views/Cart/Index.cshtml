@@ -1,0 +1,62 @@
+@model List<FoodWeb.Models.Cart>
+
+@{
+    ViewData["Title"] = "My Cart";
+}
+
+<h2 class="mb-4" style="color: white">My Cart</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Your cart is empty.</div>
+}
+else
+{
+    <form asp-action="PlaceOrder" asp-controller="Cart" method="post">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll" /></th>
+                    <th>Item</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="selectedCartItemIds" value="@item.Id" />
+                        </td>
+                        <td>@item.Item.Name</td>
+                        <td>@item.Item.Description</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Item.Price.ToString("C")</td>
+                        <td>@(item.Quantity * item.Item.Price).ToString("C")</td>
+                        <td>
+                            <form asp-action="Delete" asp-controller="Cart" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Are you sure?');">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-trash"></i> Remove
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-primary">Place Order</button>
+    </form>
+}
+
+@section Scripts {
+    <script>
+        $('#selectAll').on('click', function () {
+            $('input[name="selectedCartItemIds"]').prop('checked', this.checked);
+        });
+    </script>
+}

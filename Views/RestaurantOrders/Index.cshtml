@@ -1,0 +1,56 @@
+@model List<FoodWeb.Models.Orders>
+@{
+    ViewData["Title"] = "Manage Orders";
+}
+
+<h2 class="mb-4" style="color: white">Order Management</h2>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Order Date</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Details</th>
+            <th>Update Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.Customer.Fullname</td>
+                <td>@order.OrderDate?.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@order.Status</td>
+                <td>@order.PaymentStatus</td>
+                <td>
+                    <ul>
+                        @foreach (var detail in order.OrderDetails)
+                        {
+                            <li>
+                                <strong>@detail.MenuItem.Name</strong> × @detail.Quantity
+                                - <em>@detail.TotalPrice.ToString("N0") VND</em>
+                            </li>
+                        }
+                    </ul>
+                </td>
+                <td>
+                    <form asp-action="UpdateStatus" asp-controller="RestaurantOrders" method="post">
+                        <input type="hidden" name="id" value="@order.Id" />
+                        <select name="status" class="form-select form-select-sm mb-2">
+                            <option value="Pending" selected="@("Pending" == order.Status)">Pending</option>
+                            <option value="Preparing" selected="@("Preparing" == order.Status)">Preparing</option>
+                            <option value="Shipped" selected="@("Shipped" == order.Status)">Shipped</option>
+                            <option value="Completed" selected="@("Completed" == order.Status)">Completed</option>
+                            <option value="Cancelled" selected="@("Cancelled" == order.Status)">Cancelled</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
